@@ -1,0 +1,25 @@
+======= Registraion RequestObj ================
+{
+  "RequestObj": {
+    "FirstName": "jafar",
+    "LastName": "ulla",
+    "Email": "jafar@inneed.cloud",
+	"PhoneNumber": "123456",
+    "Password": "123"
+  },
+  "PageRecordSize": 0,
+  "PageNumber": 0,
+  "UserID": 0
+}
+
+==================== Login RequestObj ==============
+{
+  "RequestObj": {
+    "Email": "jafar3@inneed.cloud",
+    "Password": "123",
+	"SSOLogin": false
+  },
+  "PageRecordSize": 0,
+  "PageNumber": 0,
+  "UserID": 0
+}
