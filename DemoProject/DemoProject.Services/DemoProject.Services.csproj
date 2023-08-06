@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DemoProject.Common\DemoProject.Common.csproj" />
+    <ProjectReference Include="..\DemoProject.DataAccess\DemoProject.DataAccess.csproj" />
+    <ProjectReference Include="..\DemoProject.Models\DemoProject.Models.csproj" />
+    <ProjectReference Include="..\DemoProject.Repository\DemoProject.Repository.csproj" />
+    <ProjectReference Include="..\DemoProject.Utilities\DemoProject.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>
