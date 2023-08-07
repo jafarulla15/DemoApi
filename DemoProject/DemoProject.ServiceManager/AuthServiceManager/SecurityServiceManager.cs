@@ -13,8 +13,6 @@ using DemoProject.Models;
 using DemoProject.Services;
 using DemoProject.Utilities;
 using DemoProject.Utilities.Mail;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using static DemoProject.Common.Enums.Enums;
 
@@ -32,7 +30,7 @@ namespace DemoProject.ServiceManager
         private readonly IExceptionLogService _exceptionLog;
 
         public SecurityServiceManager(ISecurityService securityService, ISystemUserService systemUserService, IAccessTokenService accessTokenService
-            , ILoginInfoService loginInfoService, IAuditLogService auditLogService, IUserSessionService userSessionService, IMailService mailService)
+            , ILoginInfoService loginInfoService, IAuditLogService auditLogService, IUserSessionService userSessionService, IMailService mailService, IExceptionLogService exceptionLog)
         {
             this._securityService = securityService;
             this._systemUserService = systemUserService;
@@ -41,6 +39,7 @@ namespace DemoProject.ServiceManager
             this._auditLogService = auditLogService;
             this._userSessionService = userSessionService;
             this._mailService = mailService;
+            this._exceptionLog = exceptionLog;
         }
         
         /// <summary>
@@ -259,7 +258,6 @@ namespace DemoProject.ServiceManager
 
             return responseMessage;
         }
-
     }
 
     public interface ISecurityServiceManager

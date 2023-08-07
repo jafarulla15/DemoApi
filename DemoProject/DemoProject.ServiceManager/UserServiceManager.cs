@@ -8,7 +8,6 @@
 
 using DemoProject.Common.Constants;
 using DemoProject.Common.Enums;
-using DemoProject.DataAccess;
 using DemoProject.Models;
 using DemoProject.Services;
 using static DemoProject.Common.Enums.Enums;
@@ -24,17 +23,15 @@ namespace DemoProject.ServiceManager
         private readonly IAuditLogService _auditLogService;
         private readonly IExceptionLogService _exceptionLog;
 
-        public UserServiceManager(ISecurityService securityService, ISystemUserService systemUserService, IAccessTokenService accessTokenService, ILoginInfoService loginInfoService, IAuditLogService auditLogService)
+        public UserServiceManager(ISecurityService securityService, ISystemUserService systemUserService, IAccessTokenService accessTokenService, ILoginInfoService loginInfoService, IAuditLogService auditLogService, IExceptionLogService exceptionLog)
         {
             this._securityService = securityService;
             this._systemUserService = systemUserService;
             this._accessTokenService = accessTokenService;
             this._loginInfoService = loginInfoService;
             this._auditLogService = auditLogService;
+            this._exceptionLog = exceptionLog;
         }
-
-
-        //, Microsoft.AspNetCore.Http.HttpContext httpContext
 
         /// <summary>
         /// Get all Users
