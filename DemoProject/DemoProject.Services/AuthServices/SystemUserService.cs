@@ -37,7 +37,7 @@ namespace DemoProject.Services
             _unitOfWork = unitOfWork;
             //_dpDbContext = dpDbContext;
         }
-        
+
         /// <summary>
         /// Get User- By email address and password
         /// </summary>
@@ -46,20 +46,27 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<SystemUser> GetSystemUserByEmailAndPassword(string userEmail, string password)
         {
-            List<SystemUser> lstexistingSystemUser = (await _unitOfWork.Repository<SystemUser>()
-                 .GetAsync(predicate: x => x.Email == userEmail && x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList();
-
-            if (lstexistingSystemUser.Count > 0)
+            try
             {
-                if (!BCrypt.Net.BCrypt.Verify(password, lstexistingSystemUser[0].Password))
+                List<SystemUser> lstexistingSystemUser = (await _unitOfWork.Repository<SystemUser>()
+                    .GetAsync(predicate: x => x.Email == userEmail && x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList();
+
+                if (lstexistingSystemUser.Count > 0)
                 {
-                    return null;
+                    if (!BCrypt.Net.BCrypt.Verify(password, lstexistingSystemUser[0].Password))
+                    {
+                        return null;
+                    }
+
+                    return lstexistingSystemUser[0];
                 }
 
-                return lstexistingSystemUser[0];
+                return null;
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -70,20 +77,26 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<bool> CheckPermission(int userID, string actionKey)
         {
-            //Remark: to make simple, below hardcode.
-            if (actionKey == "/api/Security/Logout" || actionKey == "/api/SystemUser/GetAllUsers")
+            try
             {
-                return true;
+                //Remark: to make simple, below hardcode.
+                if (actionKey == "/api/Security/Logout" || actionKey == "/api/SystemUser/GetAllUsers")
+                {
+                    return true;
+                }
+
+                List<VMUserAction> lstVMUserActions = await _systemUserRepository.GetAllActionsMappedWithTheUserByActionKey(userID, actionKey);
+                if (lstVMUserActions != null && lstVMUserActions.Count > 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
-
-
-            List<VMUserAction> lstVMUserActions = await _systemUserRepository.GetAllActionsMappedWithTheUserByActionKey(userID, actionKey);
-            if (lstVMUserActions !=null && lstVMUserActions.Count > 0)
+            catch (Exception ex)
             {
-                return true;
+                throw;
             }
-
-            return false;
         }
 
         /// <summary>
@@ -93,18 +106,24 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<string> GetRoleNameByRoleID(int roleID)
         {
-            //Roles role = await _unitOfWork.Repository<Roles>()
-            //        .GetFirstOrDefaultAsync(predicate: x => x.RoleID == roleID && x.Status == (int)Enums.Status.Active, disableTracking: true);
+            try {
+                //Roles role = await _unitOfWork.Repository<Roles>()
+                //        .GetFirstOrDefaultAsync(predicate: x => x.RoleID == roleID && x.Status == (int)Enums.Status.Active, disableTracking: true);
 
-            List<Roles> lstRole = (await _unitOfWork.Repository<Roles>()
-                .GetAsync(predicate: x => x.RoleID == roleID && x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList<Roles>();
+                List<Roles> lstRole = (await _unitOfWork.Repository<Roles>()
+                    .GetAsync(predicate: x => x.RoleID == roleID && x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList<Roles>();
 
-            if (lstRole.Count > 0)
-            {
-                return lstRole[0].RoleName;
+                if (lstRole.Count > 0)
+                {
+                    return lstRole[0].RoleName;
+                }
+
+                return string.Empty;
             }
-
-            return string.Empty;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -121,7 +140,7 @@ namespace DemoProject.Services
                 objSystemUser.Status = (int)Enums.Status.Active;
                 objSystemUser.CreatedDate = DateTime.Now;
                 objSystemUser.CreatedBy = 0;
-                objSystemUser.UpdatedDate  = DateTime.Now;
+                objSystemUser.UpdatedDate = DateTime.Now;
                 objSystemUser.UpdatedBy = 0;
 
                 objSystemUser.FirstName = objVMRegister.FirstName;
@@ -132,7 +151,7 @@ namespace DemoProject.Services
 
                 objSystemUser.RoleID = 0;
                 objSystemUser.IsApproved = false;
-                objSystemUser.StatusOfUser = (int)Enums.Status.Active;  
+                objSystemUser.StatusOfUser = (int)Enums.Status.Active;
 
                 await _unitOfWork.Repository<SystemUser>().InsertAsync(objSystemUser);
                 await _unitOfWork.SaveChangesAsync();
@@ -152,15 +171,21 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<List<SystemUser>> GetAllActiveSystemUser()
         {
-            List<SystemUser> lstSystemUser = (await _unitOfWork.Repository<SystemUser>()
-                .GetAsync(predicate: x => x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList();
+            try {
+                List<SystemUser> lstSystemUser = (await _unitOfWork.Repository<SystemUser>()
+                    .GetAsync(predicate: x => x.Status == (int)Enums.Status.Active, disableTracking: true)).ToList();
 
-            foreach (SystemUser user in lstSystemUser)
-            {
-                user.Password = string.Empty;
+                foreach (SystemUser user in lstSystemUser)
+                {
+                    user.Password = string.Empty;
+                }
+
+                return lstSystemUser;
             }
-
-            return lstSystemUser;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -170,33 +195,38 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<string> CheckedValidation(VMRegister objVMRegister)
         {
-            SystemUser existingSystemUser = new SystemUser();
+            try {
+                SystemUser existingSystemUser = new SystemUser();
 
-            if (String.IsNullOrEmpty(objVMRegister.FirstName))
-            {
-                return WarningMessage.FirstnameRequired;
-            }
-            if (String.IsNullOrEmpty(objVMRegister.Email))
-            {
-                return WarningMessage.EmailRequired;
-            }
-            if (String.IsNullOrEmpty(objVMRegister.Password))
-            {
-                return WarningMessage.PasswordRequired;
-            }
+                if (String.IsNullOrEmpty(objVMRegister.FirstName))
+                {
+                    return WarningMessage.FirstnameRequired;
+                }
+                if (String.IsNullOrEmpty(objVMRegister.Email))
+                {
+                    return WarningMessage.EmailRequired;
+                }
+                if (String.IsNullOrEmpty(objVMRegister.Password))
+                {
+                    return WarningMessage.PasswordRequired;
+                }
 
-            existingSystemUser = (await _unitOfWork.Repository<SystemUser>()
-               .GetAsync(predicate: x => x.Email == objVMRegister.Email && x.Status == (int)Enums.Status.Active, disableTracking: true))
-               .ToList<SystemUser>().FirstOrDefault<SystemUser>();
+                existingSystemUser = (await _unitOfWork.Repository<SystemUser>()
+                   .GetAsync(predicate: x => x.Email == objVMRegister.Email && x.Status == (int)Enums.Status.Active, disableTracking: true))
+                   .ToList<SystemUser>().FirstOrDefault<SystemUser>();
 
-            if (existingSystemUser != null)
-            {
-                return WarningMessage.EmailAlreadyExist;
+                if (existingSystemUser != null)
+                {
+                    return WarningMessage.EmailAlreadyExist;
+                }
+
+                return string.Empty;
             }
-
-            return string.Empty;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
-
     }
 
     public interface ISystemUserService
@@ -207,15 +237,5 @@ namespace DemoProject.Services
         Task<SystemUser> SaveSystemUser(VMRegister objVMRegister);
         Task<List<SystemUser>> GetAllActiveSystemUser();
         Task<string> CheckedValidation(VMRegister objVMRegister);
-
-        //Task<string> GetRoleNameByRoleID(int roleID);
-        //Task<ResponseMessage> Login(RequestMessage requestMessage);
-        //Task<ResponseMessage> Logout(RequestMessage requestMessage);
-        //Task<ResponseMessage> Register(RequestMessage requestMessage);
-        //Task<bool> CheckPermission(int userID, string actionKey);
-        //Task<SystemUser> GetSystemUserByEmailAndPassword(string userEmail, string password);
-        //Task<string> CheckedValidation(VMRegister objVMRegister);
-        //Task<SystemUser> SaveSystemUser(VMRegister objVMRegister);
-        //Task<List<SystemUser>> GetAllActiveSystemUser();
     }
 }

@@ -41,22 +41,29 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<int> GetUserIDWithValidToken(JwtSecurityToken token)
         {
-            int userID = _commonServices.GetSystemUserId(token);
-            UserSession objUserSession = await GetUserSessionBySystemUserId(userID);
-
-            if (objUserSession != null)
+            try
             {
-                TimeSpan ts = DateTime.Now - objUserSession.SessionEnd.Value;
-                int min = ts.Minutes;
-                if (min <= CommonConstant.SessionExpired)
-                {
-                    return userID;
-                }
-            }
+                int userID = _commonServices.GetSystemUserId(token);
+                UserSession objUserSession = await GetUserSessionBySystemUserId(userID);
 
-            return 0;
+                if (objUserSession != null)
+                {
+                    TimeSpan ts = DateTime.Now - objUserSession.SessionEnd.Value;
+                    int min = ts.Minutes;
+                    if (min <= CommonConstant.SessionExpired)
+                    {
+                        return userID;
+                    }
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
-        
+
         /// <summary>
         /// Get User session by system user ID
         /// </summary>
@@ -64,8 +71,15 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<UserSession> GetUserSessionBySystemUserId(int systemUserId)
         {
-            UserSession userSession = await _userSessionRepository.GetUserSessionBySystemUserId(systemUserId);
-            return userSession;
+            try
+            {
+                UserSession userSession = await _userSessionRepository.GetUserSessionBySystemUserId(systemUserId);
+                return userSession;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -75,23 +89,31 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<UserSession> UpdateUserSessionExpireTimeBySystemUserId(int systemUserId)
         {
-            // 1. Get user session
-            //UserSession objUserSession = await _dpDbContext.UserSession.AsNoTracking().OrderBy(u => u.UserSessionID)
-            //    .LastOrDefaultAsync(x => x.SystemUserID == systemUserId && x.Status == (int)Enums.Status.Active && x.SessionEnd > DateTime.Now);
+            try
+            {
+                // 1. Get user session
+                //UserSession objUserSession = await _dpDbContext.UserSession.AsNoTracking().OrderBy(u => u.UserSessionID)
+                //    .LastOrDefaultAsync(x => x.SystemUserID == systemUserId && x.Status == (int)Enums.Status.Active && x.SessionEnd > DateTime.Now);
 
-            UserSession objUserSession = await GetUserSessionBySystemUserId(systemUserId);
+                UserSession objUserSession = await GetUserSessionBySystemUserId(systemUserId);
 
-            // 2. update session
-            if (objUserSession != null ) {
-                DateTime dateTime = DateTime.Now.AddMinutes(CommonConstant.SessionExpired);
-                objUserSession.SessionEnd = dateTime;
-                //objRequestMessageNew.RequestObj = JsonConvert.SerializeObject(objUserSession);
+                // 2. update session
+                if (objUserSession != null)
+                {
+                    DateTime dateTime = DateTime.Now.AddMinutes(CommonConstant.SessionExpired);
+                    objUserSession.SessionEnd = dateTime;
+                    //objRequestMessageNew.RequestObj = JsonConvert.SerializeObject(objUserSession);
 
-                await _userSessionRepository.SaveUserSession(objUserSession, systemUserId);
+                    await _userSessionRepository.SaveUserSession(objUserSession, systemUserId);
+                }
+
+
+                return objUserSession;
             }
-
-
-            return objUserSession;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -101,7 +123,14 @@ namespace DemoProject.Services
         /// <returns></returns>
         public async Task<bool> EndUserSessionByUserID(int systemUserID)
         {
-            return await _sessionRepository.EndAllSessionByUserID(systemUserID);
+            try
+            {
+                return await _sessionRepository.EndAllSessionByUserID(systemUserID);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 

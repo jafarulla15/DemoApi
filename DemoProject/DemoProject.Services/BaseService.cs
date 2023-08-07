@@ -6,6 +6,7 @@
  * (c) Inneed Cloud.
  */
 
+using DemoProject.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,7 @@ namespace DemoProject.Services
     {
         public void SaveExceptionIntoFile(Exception ex)
         {
-            //TODO: do later.
-            // Save into FIle....
+            CommonMethods.SaveExceptionIntoFile(ex);
         }
     }
 }

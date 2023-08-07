@@ -116,7 +116,6 @@ namespace DemoProject.Services
         }
 
         private bool _disposed = false;
-
         protected void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -128,13 +127,11 @@ namespace DemoProject.Services
                 _disposed = true;
             }
         }
-
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
     }
 
     public interface ILoginInfoService

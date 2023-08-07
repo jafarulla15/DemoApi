@@ -35,11 +35,18 @@ namespace DemoProject.Utilities
         /// <returns></returns>
         public JwtSecurityToken GetTokenFromHeader(HttpContext httpContext)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var headerToken = SubstringToken(httpContext.Request.Headers[HttpHeaders.Token]);
-            var token = handler.ReadToken(headerToken) as JwtSecurityToken;
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var headerToken = SubstringToken(httpContext.Request.Headers[HttpHeaders.Token]);
+                var token = handler.ReadToken(headerToken) as JwtSecurityToken;
 
-            return token;
+                return token;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -49,7 +56,14 @@ namespace DemoProject.Utilities
         /// <returns></returns>
         public int GetSystemUserId(JwtSecurityToken token)
         {
-            return Convert.ToInt32(token.Claims.First(claim => claim.Type == JwtClaim.UserId).Value);
+            try
+            {
+                return Convert.ToInt32(token.Claims.First(claim => claim.Type == JwtClaim.UserId).Value);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         #endregion
@@ -63,7 +77,14 @@ namespace DemoProject.Utilities
         /// <returns></returns>
         private string SubstringToken(string fullToken)
         {
-            return fullToken.Replace("Bearer ", "");
+            try
+            {
+                return fullToken.Replace("Bearer ", "");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         #endregion
