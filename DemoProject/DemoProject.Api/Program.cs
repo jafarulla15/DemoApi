@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(c =>
 /*-------------Database connection--------*/
 builder.Services.AddDbContext<DPDbContext>(options =>
 {
-    options.UseSqlServer("Server=DESKTOP-BFB83V1\\SQLEXPRESS;Database=DemoProject;Trusted_Connection=True;MultipleActiveResultSets=true;");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Cn"));
 });
 
 //builder.Services.AddDbContext<LogDbContext>(options =>
