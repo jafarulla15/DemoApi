@@ -20,5 +20,6 @@ namespace DemoProject.Common.Constants
         public const string SavedSuccessfully = "Saved successfully";
         public const string LogOutSuccessfully = "Logout successfully";
         public const string RegisterSuccessfully = "Register successfully";
+        public const string GetUserSuccessfully = "Get user successfully";
     }
 }

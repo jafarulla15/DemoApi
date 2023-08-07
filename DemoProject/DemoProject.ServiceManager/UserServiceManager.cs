@@ -57,7 +57,7 @@ namespace DemoProject.ServiceManager
                 }
 
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
-                responseMessage.Message = SuccessMessage.LoginSuccess;
+                responseMessage.Message = SuccessMessage.GetUserSuccessfully;
                 responseMessage.ResponseObj = lstSystemUser;
 
                 // 3. Audit Log writing.

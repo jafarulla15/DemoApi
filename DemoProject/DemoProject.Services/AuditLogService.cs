@@ -25,14 +25,27 @@ namespace DemoProject.Services
         {
             try
             {
-                var token = _httpContext.HttpContext.Request.Headers[HttpHeaders.Token];
+                string userID = string.Empty;
+                long sessionID = 0;
+                int companyID = 0;
 
-                var handler = new JwtSecurityTokenHandler();
-                var JWTToken = handler.ReadToken(token)
-                    as JwtSecurityToken;
+                try
+                {
+                    var token = _httpContext.HttpContext.Request.Headers[HttpHeaders.Token];
+                    var handler = new JwtSecurityTokenHandler();
+                    var JWTToken = handler.ReadToken(token)
+                        as JwtSecurityToken;
+
+                    userID = (JWTToken is null) ? "" : GetTokenUser(JWTToken);
+                    sessionID = (JWTToken is null) ? 0 : Getsession(JWTToken);
+                    companyID = (JWTToken is null) ? 0 : GetTokenCompanyID(JWTToken);
+                }
+                catch (Exception e)
+                {
+                }
 
                 AuditLog log = new AuditLog();
-                log.UserID = (JWTToken is null) ? "" : GetTokenUser(JWTToken);
+                log.UserID = userID;
                 log.ModuleID = moduleId;
                 log.FormName = FormName;
                 log.CalledFunction = CalledFunction;
@@ -44,8 +57,8 @@ namespace DemoProject.Services
                 log.IsObj = IsObject;
                 log.LogTime = DateTime.Now;
                 log.LogTypeID = logTypeId;
-                log.SessionID = (JWTToken is null) ? 0 : Getsession(JWTToken); ;
-                log.CompanyID = (JWTToken is null) ? 0 : GetTokenCompanyID(JWTToken);
+                log.SessionID = sessionID;
+                log.CompanyID = companyID;
                 //for create new theard
                 Thread thread = new Thread(() => saveLogs(log));
                 thread.Start();
