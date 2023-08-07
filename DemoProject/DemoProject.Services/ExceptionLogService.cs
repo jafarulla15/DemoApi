@@ -1,4 +1,5 @@
-﻿using DemoProject.Models;
+﻿using DemoProject.DataAccess;
+using DemoProject.Models;
 using DemoProject.Repository;
 using Newtonsoft.Json;
 
@@ -6,11 +7,10 @@ namespace DemoProject.Services
 {
     public class ExceptionLogService : BaseService, IExceptionLogService
     {
-        //private readonly ICustomDbContextFactory<DPDbContext> _customDbContextFactory;
-        private IUnitOfWork _unitOfWork;
-        public ExceptionLogService(IUnitOfWork unitOfWork)
+        private readonly ICustomDbContextFactory<DPDbContext> _customDbContextFactory;
+        public ExceptionLogService(ICustomDbContextFactory<DPDbContext> unitOfWorks)
         {
-            _unitOfWork = unitOfWork;
+            _customDbContextFactory = unitOfWorks;
         }
 
         public async Task SaveExceptionLog(int priority, int moduleID, string exceptionMessege, string exceptionDetail, object objectData, string controllerName, string actionName, int actionType, string managerName)
@@ -30,8 +30,11 @@ namespace DemoProject.Services
                 exceptionLog.ManagerName = managerName;
                 exceptionLog.ExceptionTime = DateTime.UtcNow;
 
-                await _unitOfWork.Repository<ExceptionLog>().InsertAsync(exceptionLog);
-                await _unitOfWork.SaveChangesAsync();
+                using (var dbContext = _customDbContextFactory.CreateDbContext(string.Empty))
+                {
+                    await dbContext.ExceptionLog.AddAsync(exceptionLog);
+                    await dbContext.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -113,8 +113,9 @@ builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped< IMailService, MailService >();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+builder.Services.AddSingleton<ICustomDbContextFactory<DPDbContext>, CustomDbContextFactory<DPDbContext>>();
 
 /*-------------Service register area-------END-----*/
 

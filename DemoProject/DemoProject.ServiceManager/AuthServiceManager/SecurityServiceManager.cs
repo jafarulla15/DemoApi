@@ -41,7 +41,7 @@ namespace DemoProject.ServiceManager
             this._mailService = mailService;
             this._exceptionLog = exceptionLog;
         }
-        
+
         /// <summary>
         /// Login Method
         /// </summary>
@@ -138,6 +138,7 @@ namespace DemoProject.ServiceManager
                      actionName, (int)Enums.ActionType.View, "SecurityServiceManager");
 
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+                responseMessage.Message = ErrorMessage.InternalServerError;
             }
 
             return responseMessage;
@@ -180,6 +181,7 @@ namespace DemoProject.ServiceManager
                 requestMessage, controllerName, actionName, (int)Enums.ActionType.Update, "SecurityServiceManager");
 
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+                responseMessage.Message = ErrorMessage.InternalServerError;
             }
 
             return responseMessage;
@@ -225,7 +227,7 @@ namespace DemoProject.ServiceManager
                             responseMessage.ResponseCode = (int)Enums.ResponseCode.Success;
 
                             // ** Send Mail
-                             _mailService.SendEmailAsync(new MailRequest() { ToEmail = objVMRegister.Email, Subject = "@Thank you from Demo Project", Body = $"Thank you for being with us" });
+                            _mailService.SendEmailAsync(new MailRequest() { ToEmail = objVMRegister.Email, Subject = "@Thank you from Demo Project", Body = $"Thank you for being with us" });
                         }
                         else
                         {
@@ -254,6 +256,7 @@ namespace DemoProject.ServiceManager
                 requestMessage, controllerName, actionName, (int)Enums.ActionType.Insert, "SecurityServiceManager");
 
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+                responseMessage.Message = ErrorMessage.InternalServerError;
             }
 
             return responseMessage;
@@ -264,7 +267,7 @@ namespace DemoProject.ServiceManager
     {
         Task<ResponseMessage> Login(RequestMessage requestMessage, Microsoft.AspNetCore.Http.HttpContext httpContext, string controllerName, string actionName);
         Task<ResponseMessage> Logout(RequestMessage requestMessage, string controllerName, string actionName);
-        
+
         /// <summary>
         /// User Register Method
         /// </summary>

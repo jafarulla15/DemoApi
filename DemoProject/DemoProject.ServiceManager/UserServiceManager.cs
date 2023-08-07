@@ -72,6 +72,7 @@ namespace DemoProject.ServiceManager
                      actionName, (int)Enums.ActionType.View, "SecurityServiceManager");
 
                 responseMessage.ResponseCode = (int)Enums.ResponseCode.Failed;
+                responseMessage.Message = ErrorMessage.InternalServerError;
             }
 
             return responseMessage;

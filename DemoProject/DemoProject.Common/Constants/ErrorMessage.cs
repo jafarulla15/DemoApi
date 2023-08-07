@@ -20,5 +20,6 @@ namespace DemoProject.Common.Constants
         public const string Invaliddatafound = "Invalid data found";
         public const string LogOutFailed = "Logout failed";
         public const string RegisterFailed = "Register failed";
+        public const string InternalServerError = "Internal server error";
     }
 }
